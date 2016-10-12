@@ -213,8 +213,18 @@ void initPrimeArray(long long n)
 
 long long prime(long long index)
 {
+
     long long up, low;
     long long ans;
+
+    if(index <= 100)
+    {
+        initPrimeArray(600);
+        ans = arr_prime[index+1];
+        collect();
+        return ans;
+    }
+
     up = (long long)(index * log(index) + index * log(log(index)));
     low = up - index;
     low = (low - 1) | 0x01;
