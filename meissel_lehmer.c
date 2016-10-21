@@ -4,7 +4,7 @@ long long *arr_prime;//小于n^(2/3)的素数表
 long long *table_phi, *preset_table_phi;//
 long long q, p;
 long long preset_p, preset_q;
-char *mark;
+char *mark;//标志一个数是否不为素数
 long long count;
 
 //Pi(n),小于n的素数个数
@@ -19,7 +19,7 @@ long long pi(long long n)
     while(low < up - 1)
     {
         mid = (low + up)/2;
-        if(arr_prime[mid] < n)
+        if(arr_prime[mid] <= n)
         {
             low = mid;
         }
@@ -28,6 +28,9 @@ long long pi(long long n)
             up = mid;
         }
     }
+#if DEBUG
+    printf("in func pi: %lld th is %lld\n", low + 1, arr_prime[low]);
+#endif
     return low + 1;
 }
 
@@ -62,23 +65,23 @@ long long primeBelow(long long n)
     //n^(1/2)内的素数数目
     len2 = pi((long long)sqrt(n));
     //n^（2/3)内的素数数目
-    len3 = pi((long long)exp(2.0 / 3 * log(n)) - 1);
-
+    len3 = pi((long long)exp(2.0 / 3 * log(n)));
+#if DEBUG
+    printf("in func primeBelow: len~3 %lld, %lld, %lld\n", len , len2, len3);
+#endif
     //乘积个数
-    j =(long long)exp(2.0 / 3 * log(n)) - 2;
-    for (i = (long long)exp(1.0 / 3 * log(n)); i <= (long long)sqrt(n); ++i)
+    j = arr_prime[len3-1];
+    for (i = arr_prime[len-1]; i <= arr_prime[len2-1]; i += 2)
     {
         if (!mark[i])
         {
-            while (i * j > n)
+            while (i * j > n)//疑为此处
             {
+                if (!mark[j])
                 {
-                    if (!mark[j])
-                    {
-                        ++s;
-                    }
-                    --j;
+                    ++s;
                 }
+                j -= 2;
             }
             sum += s;
         }
@@ -125,14 +128,18 @@ long long primeBelow(long long n)
 //二分查找
 long long __prime( long long low, long long up, long long index)
 {
-    if(up - low <= 2) return low;
+    if(up - low <= 2) return up;
     long long mid = ((up + low) / 2) | 0x01;
     long long n;
 
     n = primeBelow(mid);
+#if DEBUG
+    printf("in func __prime:\n\tlow=%lld, pi(low)=%lld\n\tmid=%lld, pi(mid)=%lld\n\t"
+           "up=%lld, pi(up)=%lld\n", low, primeBelow(low), mid, n, up, primeBelow(up));
+#endif
     if(n < index)
     {
-        return __prime(mid + 2, up, index);
+        return __prime(mid, up, index);
     }
     else
     {
@@ -220,7 +227,7 @@ long long prime(long long index)
     if(index <= 100)
     {
         initPrimeArray(600);
-        ans = arr_prime[index+1];
+        ans = arr_prime[index-1];
         collect();
         return ans;
     }

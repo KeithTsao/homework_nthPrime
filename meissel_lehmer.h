@@ -1,6 +1,8 @@
 #ifndef MEISSEL_LEHMER_H
 #define MEISSEL_LEHMER_H
+#define DEBUG 0
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 

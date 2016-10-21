@@ -20,6 +20,5 @@ int main()
     }
     count = prime(n);
     printf("%lld\n", count);
-
     return 0;
 }
